@@ -50,7 +50,6 @@ flask run
 - export env variables:
 ```
 . ./export_local_db_variables.sh
-
 ```
 - start a new postgres in docker:
 ```
@@ -60,10 +59,10 @@ docker run --name emblinator-postgres -d -e POSTGRES_DB=$POSTGRES_DB_NAME -e POS
 ```
 flask create-db
 ```
-- insert file-info
-    - `PREFIX` bucket folder
-    - `JOB_NAME` name to see in ui
-    - `CATEGORIES` annotation categories
+- Create new job with images to be annotated
+    - `PREFIX` Folder where images are located in bucket
+    - `JOB_NAME` Ui listing in jobs
+    - `CATEGORIES` Comma separated list of categories to be added for this job
 ```
 flask insert-file-info [OPTIONS] PREFIX JOB_NAME CATEGORIES
 #flask insert-file-info waterplants Waterplants water,plant
