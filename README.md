@@ -1,5 +1,8 @@
+# Emblinator backend
 
-# Annotator backend
+Emblinator is an image annotation tool, designed to make it easy to create annotated images for (among others) supervised machine learning tasks.
+
+This repo hosts the backend for Emblinator. You should checkout the [frontend](https://github.com/emblica/emblinator-front) to get both the frontend and the backend running.
 
 ## Table of Contents
 - [Running](#Running)
@@ -41,10 +44,26 @@ flask run
 ## Setup
 
 #### Create python environment
-- Create virtualenvrionment for python
+- Create virtualenvrionment for python. You should use Python 3.7.4.
 - Install imagemagick `brew install freetype imagemagick`
 - Install requirements `pip install -r requirements.txt`
-- Set appropriate environment variables (`GOOGLE_APPLICATION_CREDENTIALS`).
+
+#### Create GCP environment
+Emblinator uses GCP storage buckets for image storage.
+- Set up Google storage (guide [here](https://cloud.google.com/storage/docs/creating-buckets))
+  -  your images should be sorted into folders like so:
+  ```
+    - folder1
+        - image1_1
+        - image1_2
+        - ...
+    - folder 2
+        - image2_1
+        - image2_2
+        - ...
+  ```
+- Set up Google Cloud Platform application credentials (guide [here](https://cloud.google.com/docs/authentication/getting-started))
+  - you can create a `/secrets/`-folder for them, that folder is in `.gitignore`
 
 #### Create database
 - export env variables:
@@ -59,15 +78,25 @@ docker run --name emblinator-postgres -d -e POSTGRES_DB=$POSTGRES_DB_NAME -e POS
 ```
 flask create-db
 ```
-- Create new job with images to be annotated
-    - `PREFIX` Folder where images are located in bucket
-    - `JOB_NAME` Ui listing in jobs
-    - `CATEGORIES` Comma separated list of categories to be added for this job
+
+### Create database entities
+
+- Use `flask insert-file-info` to create the image and category DB entries. Run this before running server!
+
 ```
 flask insert-file-info [OPTIONS] PREFIX JOB_NAME CATEGORIES
+```
+ where
+  - `PREFIX` is folder where images are located in bucket
+  - `JOB_NAME` is used for ui listing in jobs
+  - `CATEGORIES` Comma separated list of categories to be added for this job
+
+For example:
+```
 #flask insert-file-info waterplants Waterplants water,plant
 ```
-- run application:
+
+### Run application:
 ```
 flask run
 ```
