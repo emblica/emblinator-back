@@ -1,1 +1,4 @@
 .gitlab-ci.yml
+**/__pycache__/
+.env
+/secrets
