@@ -27,7 +27,7 @@ flask run
 - Create network for containers `docker network create emblinator`
 - Add postgres to network `docker network connect emblinator emblinator-postgres`
 - `docker build -t annotator-backend .`
-- Run dev server: `docker run -it -p 5000:5000 --env-file docker.env --network emblinator  annotator-backend flask run --host 0.0.0.0`
+- Run dev server: `docker run -it -p 5000:5000 --env-file docker.env --network emblinator -v `pwd`/secrets/{your_google_credentials.json}:/secrets/credentials.json  annotator-backend flask run --host 0.0.0.0`
 
 ### Run and build docker in production
  - TODO
