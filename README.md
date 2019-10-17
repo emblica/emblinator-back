@@ -7,7 +7,6 @@
 
 ## Run locally
 
-
 ### Running application
 - export env variables:
 ```
@@ -22,11 +21,16 @@ docker start emblinator-postgres
 flask run
 ```  
 
-### Run and build docker
+### Run and build docker in development
 
+- fill `docker.env_default` and rename to `docker.env` 
+- Create network for containers `docker network create emblinator`
+- Add postgres to network `docker network connect emblinator emblinator-postgres`
 - `docker build -t annotator-backend .`
-- Run dev server: `docker run -it -p 5000:5000 annotator-backend flask run --host 0.0.0.0`
-- In production: `docker run -p 8000:8000 annotator-backend`
+- Run dev server: `docker run -it -p 5000:5000 --env-file docker.env --network emblinator  annotator-backend flask run --host 0.0.0.0`
+
+### Run and build docker in production
+ - TODO
 
 ## Important commands
 
