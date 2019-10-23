@@ -68,37 +68,33 @@ def create_app(environment=os.environ.get('ENVIRONMENT', 'deployment')):
 
         export_path = 'exports/' + export_path + '/'
 
-        index = 1
-        for file in job.files:
-            annotations = file.annotations
-            if annotations:
-                newest_annotation = sorted(
-                    annotations, key=lambda a: a.created_at
-                )[-1]
+        annotated_files = (file for file in files if file.annotations)
+        for index, file in enumerate(annotated_files, start=1):
+            newest_annotation = sorted(
+                file.annotations, key=lambda a: a.created_at
+            )[-1]
 
-                categories = newest_annotation.categories
+            categories = newest_annotation.categories
 
-                binary_annotation_data = base64.b64decode(
-                    newest_annotation.data[len('data:image/png;base64,'):]
-                )
+            binary_annotation_data = base64.b64decode(
+                newest_annotation.data[len('data:image/png;base64,'):]
+            )
 
-                # Original
-                blob = list(bucket.list_blobs(prefix=file.bucket_path, max_results=1))[0]
-                file_object = io.BytesIO()
-                blob.download_to_file(file_object)
-                file_object.seek(0)
-                new_blob = bucket.blob(export_path + f'{index:04d}_original.png')
-                new_blob.upload_from_file(file_object)
+            # Original
+            blob = list(bucket.list_blobs(prefix=file.bucket_path, max_results=1))[0]
+            file_object = io.BytesIO()
+            blob.download_to_file(file_object)
+            file_object.seek(0)
+            new_blob = bucket.blob(export_path + f'{index:04d}_original.png')
+            new_blob.upload_from_file(file_object)
 
-                # Annotation
-                new_blob = bucket.blob(export_path + f'{index:04d}_annotation.png')
-                new_blob.upload_from_string(binary_annotation_data)
+            # Annotation
+            new_blob = bucket.blob(export_path + f'{index:04d}_annotation.png')
+            new_blob.upload_from_string(binary_annotation_data)
 
-                # Labels
-                new_blob = bucket.blob(export_path + f'{index:04d}_categories.json')
-                new_blob.upload_from_string(categories)
-
-                index += 1
+            # Labels
+            new_blob = bucket.blob(export_path + f'{index:04d}_categories.json')
+            new_blob.upload_from_string(categories)
 
     @app.cli.command()
     @click.argument('prefix')
