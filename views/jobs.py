@@ -59,4 +59,10 @@ def jobs():
         for job, file_count, annotated_count, done_count in query
     ])
 
-
+@api.route('/job/<id>')
+def job(id):
+    job = Job.query.filter_by(id=id).first()
+    return jsonify({
+        'id': job.id,
+        'name': job.name
+    })
